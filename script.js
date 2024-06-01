@@ -1,54 +1,65 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const images = document.querySelectorAll('img');
-  const resetButton = document.getElementById('reset');
-  const verifyButton = document.getElementById('verify');
-  const messagePara = document.getElementById('para');
-  let clickedImages = [];
+//your JS code here. If required.
+//your code here
+const main = document.querySelector("main");
+const verify = document.getElementById("verify");
+const reset = document.getElementById("reset");
+const para = document.getElementById("para");
 
-  // Add event listeners to the images
-  images.forEach(image => {
-    image.addEventListener('click', handleClick);
-  });
+// console.log(main);
+let arrClasses = ["img1" ,"img2","img3","img4","img5" ]
+let randomPhotoClass = arrClasses[Math.round(Math.random()*5)];
+// console.log(randomPhotoUrl);
+const randomPhoto = document.createElement("img");
+randomPhoto.className = randomPhotoClass;
+main.appendChild(randomPhoto);
 
-  // Add event listener to the reset button
-  resetButton.addEventListener('click', reset);
 
-  // Add event listener to the verify button
-  verifyButton.addEventListener('click', verify);
+const imgs = document.getElementsByTagName("img");
+let clicked = 0;
+let selected = [];
+for (let i=0 ;i<imgs.length;i++){
+    const currentImg = imgs[i];
+    currentImg.addEventListener("click",()=>{
+        selected.push(currentImg);
+        clicked++;
+        currentImg.classList.add("selected");  
+        if(clicked === 1){
+              reset.style.display = "flex";
+            reset.addEventListener("click",()=>{
+                clicked = 0;
+                for(let val of selected) val.classList.remove("selected");
+                reset.style.display = "none"; 
+                para.style.display = "none";
+            })
+        }
+        else if(clicked === 2){
+            verify.style.display = "flex";
+        }
+        else{
+            verify.style.display = "none";
+        }
+    })
+}
 
-  // Reset the state to the initial state
-  reset();
-
-  // Handle image click event
-  function handleClick(event) {
-    const clickedImage = event.target;
-
-    if (!clickedImages.includes(clickedImage)) {
-      clickedImages.push(clickedImage);
-
-      if (clickedImages.length === 2) {
-        verifyButton.style.display = 'block';
-      }
+verify.addEventListener("click",()=>{
+    let classes = [];
+    for(let val of selected){
+        classes.push(val.className);
     }
-  }
-
-  // Reset the state to the initial state
-  function reset() {
-    clickedImages = [];
-    resetButton.style.display = 'none';
-    verifyButton.style.display = 'none';
-    messagePara.textContent = '';
-    shuffleImages();
-  }
-
-  // Shuffle the images randomly
-  function shuffleImages() {
-    const classNames = ['img1', 'img2', 'img3', 'img4', 'img5', 'img6'];
-    classNames.sort(() => Math.random() - 0.5);
-
-    images.forEach((image, index) => {
-      image.className = classNames[index];
-    });
-  }
-
-  // Verify
+    let sameClass = true;
+    for(let i = 0; i < classes.length-1; i++){
+         if(classes[i] !== classes[i+1]){
+            sameClass = false;
+            break;
+         }
+    }
+    if(sameClass === true){
+        para.style.display = "flex";
+       para.innerText = "You are a human. Congratulations!";
+    }
+    else{
+        para.style.display = "flex";
+        para.innerText = "We can't verify you as a human. You selected the non-identical tiles.";
+    }
+    verify.style.display = "none";
+})
